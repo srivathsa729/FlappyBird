@@ -30,6 +30,7 @@ def check_collision(pipes):
             return False
     
     if bird_rect.top <= -50 or bird_rect.bottom >= 450:
+        death_sound.play()
         return False
     
     return True
@@ -62,18 +63,21 @@ def update_score(score, high_score):
         high_score = score
     return high_score
 
+# Main code starts from here
+
 pygame.mixer.pre_init(frequency = 44100, size = 8, channels = 1, buffer = 128)
 pygame.init()
 screen = pygame.display.set_mode((288, 512))
 clock = pygame.time.Clock()
 game_font = pygame.font.Font('04B_19.TTF', 20)
 
-#Game Variables
+# Game Variables
 gravity = 0.125
 bird_movement = 0
 game_active = True
 score = 0
 high_score = 0
+floor_x_pos = 0
 
 bg_surface = pygame.image.load("assets/background-day.png").convert()
 
@@ -87,20 +91,19 @@ bird_index = 0
 bird_surface = bird_frames[bird_index]
 bird_rect = bird_surface.get_rect(center = (50, 256))
 
+# BIRDFLAP is user event which triggers for every 200ms, so that index for bird frame gets updated
 BIRDFLAP = pygame.USEREVENT + 1
 pygame.time.set_timer(BIRDFLAP, 200)
 
-# bird_surface = pygame.image.load("assets/redbird-midflap.png").convert_alpha()
-# bird_rect = bird_surface.get_rect(center = (50, 256))
 
 pipe_surface = pygame.image.load("assets/pipe-green.png").convert()
 pipe_list = []
 
+# SPAWNPIPE is also a user event which triggers for every 1.2s which intern adds a new pipe to list
 SPAWNPIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPIPE, 1200)
 pipe_height = [200, 300, 400]
 
-floor_x_pos = 0
 
 game_over_surface = pygame.image.load("assets/message.png").convert_alpha()
 game_over_rect = game_over_surface.get_rect(center = (144, 256))
